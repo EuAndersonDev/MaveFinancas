@@ -147,8 +147,4 @@ npm install
 npm run dev
 ```
 
----
 
-👉 Esse README já está mais **enxuto e padronizado**, mas ainda completo para um professor ou avaliador entender rápido.
-
-Quer que eu te ajude a montar também a **estrutura de diretórios sugerida** (backend e frontend) para já deixar o repositório organizado?
