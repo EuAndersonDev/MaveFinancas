@@ -1,6 +1,3 @@
-import Logo from "@/components/Logo";
-import SignInButton from "@/components/SignInButton";
-import HeroMosaic from "@/components/HeroMosaic";
 
 export default function LoginPage() {
   return (
