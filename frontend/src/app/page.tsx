@@ -1,10 +1,12 @@
 import Logo from "@/components/Logo";
-import WelcomeText from "@/components/WelcomeText";
-import AuthButton from "@/components/AuthButton";
+import WelcomeText from "@/components/login/WelcomeText";
+import AuthButton from "@/components/login/AuthButton";
+import Header from "@/components/header/header";
 
 export default function Home() {
   return (
     <main className="flex h-screen bg-black text-white">
+      <Header />
       {/* Lado esquerdo */}
       <section className="flex flex-col justify-center items-start w-1/2 px-16">
         <Logo />
