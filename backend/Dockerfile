@@ -1,27 +1,20 @@
-# Use a imagem oficial do Maven para compilar o projeto
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+FROM node:18-alpine
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto
-COPY pom.xml .
-COPY src ./src
+# Copia os arquivos necessários
+COPY package.json package-lock.json ./
+COPY . .
+
+# Instala as dependências
+RUN npm install
 
 # Compila o projeto
-RUN mvn clean package -DskipTests
+RUN npm run build
 
-# Usa uma imagem leve do Java para rodar o JAR
-FROM eclipse-temurin:17-jre
-
-# Define o diretório de trabalho
-WORKDIR /app
-
-# Copia o JAR gerado
-COPY --from=build /app/target/*.jar app.jar
-
-# Expõe a porta do Spring Boot
-EXPOSE 8080
+# Expõe a porta do Next.js
+EXPOSE 3333
 
 # Comando para iniciar o servidor
-CMD ["java", "-jar", "app.jar"]
+CMD ["npm", "start"]
