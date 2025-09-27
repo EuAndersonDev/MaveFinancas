@@ -32,3 +32,5 @@ INSERT INTO user (name, email, password) VALUES ('Test User', 'testuser@example.
 
 -- Depois insira a conta
 INSERT INTO account (balance, user_id) VALUES (1000.00, 1);
+
+select * from user

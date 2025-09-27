@@ -13,9 +13,9 @@ module.exports = connection;
 const testConnection = async () => {
     try {
         await connection.getConnection();
-        console.log("Database connection established");
+        console.log("Conexão com o banco ok");
     } catch (error) {
-        console.error("Database connection failed:", error);
+        console.error("Erro de conexão com o banco:", error);
     }
 }
 
