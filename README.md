@@ -3,7 +3,7 @@
 Sistema para **gerenciamento de contas, transações e relatórios financeiros**, com autenticação segura via **JWT**.
 
 Frontend: **Next.js**  
-Backend: **Spring Boot** + **PostgreSQL**  
+Backend: **nodeJS** + **mySQL** + **Postman** 
 Documentação: **Swagger**
 
 ---
@@ -35,7 +35,7 @@ Documentação: **Swagger**
 ## 🗂️ Modelo de Dados
 
 **User**  
-* id, name, email, password, created_at
+* id, name, email (UNIQUE), password, created_at
 
 **Account**  
 * id, user_id, name, balance, created_at
@@ -50,20 +50,20 @@ Documentação: **Swagger**
 
 ## 📅 Planejamento por Sprints
 
-### 🟢 Sprint 1 — Planejamento (até 25/08/2025)
+### 🟢 Sprint 1 — Planejamento (até 22/09/2025)
 * Definir tema e backlog.
 * Criar protótipos no Figma.
 * Organizar tarefas no Trello.
 
-### 🟡 Sprint 2 — Desenvolvimento (26/08 → 30/09/2025)
-* Implementar backend (Spring Boot + JWT + Swagger).
+### 🟡 Sprint 2 — Desenvolvimento (22/09 → 13/09/2025)
+* Implementar backend (nodeJS + POSTMAN + JWT + Swagger).
 * Implementar frontend (Next.js).
 * Funcionalidades principais: autenticação, contas, transações e extrato.
 
 ### 🔵 Sprint 3 — Testes & Documentação (01/10 → 27/10/2025)
-* Testes unitários (JUnit, Jest).
+* Testes unitários (Jest).
 * Testes de API (Postman).
-* Testes funcionais (Selenium IDE).
+* Testes de caixa preta (Selenium IDE).
 * Documentação final no Swagger.
 
 ---
