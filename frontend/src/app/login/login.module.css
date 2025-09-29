@@ -1,0 +1,44 @@
+.container {
+  position: relative;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #0B0B0D;
+  color: #fff;
+}
+
+.leftSection {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+  padding: 0 64px;
+  gap: 32px;
+}
+
+.leftSection h1 {
+  font-size: 32px;
+  margin: 0 0 16px;
+}
+
+.leftSection p {
+  max-width: 380px;
+  line-height: 1.4;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.hiddenHalf {
+  width: 50%;
+}
+
+.logoDecoration {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+  user-select: none;
+}
