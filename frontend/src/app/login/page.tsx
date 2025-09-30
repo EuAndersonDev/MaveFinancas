@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import styles from "./login.module.css";
-import LoginForm from "@/components/Login/LoginForm";
+import LoginSection from "@/components/Login/LoginSection";
 
 export default function LoginPage() {
   return (
@@ -11,24 +11,11 @@ export default function LoginPage() {
         <div>
           <h1>Bem-vindo</h1>
           <p>
-            A Mave Finanças é uma plataforma de gestão financeira que monitora suas
-            movimentações e oferece insights personalizados, facilitando o controle
-            do seu orçamento.
+             Realize seu login para gerenciar suas finanças com praticidade e controle total.
           </p>
         </div>
-
-        <LoginForm
-          onCreateAccount={() => {
-            // Ex: redirecionar para /register
-            console.log("Ir para fluxo de criação de conta");
-          }}
-          onSuccess={(data) => {
-            console.log("Login OK:", data);
-            // Ex: redirecionar dashboard
-          }}
-        />
+        <LoginSection />
       </section>
-
       <div className={styles.hiddenHalf} />
       <Image
         src="/logoLogin.svg"

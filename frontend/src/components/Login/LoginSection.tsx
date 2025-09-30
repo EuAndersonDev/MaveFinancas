@@ -8,7 +8,7 @@ export default function LoginSection() {
 
   return (
     <LoginForm
-      onCreateAccount={() => router.push("/register")}
+      onCreateAccount={() => router.push("/signup")}
       onSuccess={() => router.push("/dashboard")}
       onError={(msg) => console.warn("Falha login:", msg)}
     />
