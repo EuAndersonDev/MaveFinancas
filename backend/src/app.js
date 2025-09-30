@@ -8,6 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Documentação Swagger
+const swagger = require('./swagger/swaggerDocs');
+swagger(app);
+
 // Healthcheck simples
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
