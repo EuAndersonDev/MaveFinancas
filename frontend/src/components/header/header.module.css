@@ -1,114 +1,133 @@
+/* Paleta:
+  Background 01: #0F0E11
+  Background 02: #141414
+  Green: #55B02E
+  Dark Gray: #1F1F21
+  Gray: #71717A
+  Light Gray: #B8B8B8
+  White: #FFFFFF
+*/
+
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   width: 100%;
-  max-width: 1442px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0F0E11; /* Background 01 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .container {
+  /* largura total e gutters fixos de 32px */
+  width: 100%;
+  margin: 0;
+  min-height: 72px;           /* altura do Figma */
+  padding: 16px 32px;         /* gutters de 32px */
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  gap: clamp(24px, 30vw, 470px); /* gap do Figma com redução gradual */
+  box-sizing: border-box;
 }
 
-.logo {
+.left {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 24px;
 }
 
-.logoGraphic {
-  display: flex;
+.brand {
+  display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 10px;
+  text-decoration: none;
 }
-
-.logoGraphic > div {
-  background-color: #22c55e;
-}
-
-.bar1 { width: 1.25rem; height: 0.375rem; }
-.bar2 { width: 1.75rem; height: 0.75rem; }
-.bar3 { width: 1.5rem; height: 0.625rem; }
-.bar4 { width: 0.75rem; height: 0.66rem; }
-.bar5 { width: 1.5rem; height: 0.625rem; }
-.bar6 { width: 1.25rem; height: 0.375rem; }
-.bar7 { width: 0.75rem; height: 0.667rem; }
 
 .logoText {
-  color: white;
-  font-size: 1.875rem;
-  font-weight: bold;
-  font-family: 'Mulish', sans-serif;
-  line-height: 2.5rem;
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: "Mulish", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 
 .nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 24px;
 }
 
-.nav a {
-  font-size: 0.875rem;
-  font-family: 'Mulish', sans-serif;
-  text-decoration: none;
-  padding: 0.5rem 0.625rem;
-  border-radius: 0.375rem;
-  transition: all 0.2s;
-}
-
-.active {
-  color: #22c55e;
-  font-weight: bold;
-}
-
-.inactive {
-  color: #71717a;
+.navLink {
+  color: #71717A;             /* Gray */
+  font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: color 0.15s ease;
 }
 
-.inactive:hover {
-  color: #a1a1aa;
+.navLink:hover {
+  color: #B8B8B8;             /* Light Gray */
 }
 
-.userProfile {
+.navLinkActive {
+  color: #55B02E;             /* Green */
+  font-weight: 700;
+}
+
+.user {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 2.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  outline: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #141414;        /* Background 02 */
+  border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.avatar {
-  position: relative;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 50%;
-}
-
-.avatarBg {
-  position: absolute;
-  inset: 0;
-  background-color: white;
-  border-radius: 50%;
-}
-
-.avatarImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+.userIconWrap {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #FFFFFF;        /* White */
+  color: #0F0E11;             /* Background 01 (ícone preto) */
 }
 
 .userName {
-  color: white;
-  font-size: 0.875rem;
+  color: #FFFFFF;             /* White */
+  font-size: 14px;
   font-weight: 600;
-  font-family: 'Mulish', sans-serif;
+  font-family: "Mulish", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+@media (max-width: 1280px) {
+  .container {
+    gap: clamp(16px, 18vw, 320px);
+    /* mantém gutters de 32px */
+    padding: 16px 32px;
+  }
+  .nav {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .container {
+    gap: clamp(12px, 12vw, 220px);
+    min-height: 64px;
+    /* mantém gutters de 32px */
+    padding: 12px 32px;
+  }
+  .nav {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .userName {
+    display: none; /* mantém “quadradinho” compacto em telas menores */
+  }
 }
