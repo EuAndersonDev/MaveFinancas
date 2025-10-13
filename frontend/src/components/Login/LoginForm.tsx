@@ -33,20 +33,41 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
     }
     setErrors(null);
     setLoading(true);
+   const API_BASE = (import.meta as any)?.env?.VITE_API_URL ?? "";
+// ...existing code...
+try {
+  const resp = await fetch(`${API_BASE}/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, senha }),
+  });
+
+  if (!resp.ok) {
+    const contentType = resp.headers.get("content-type") || "";
+    let errorMessage = `Erro ${resp.status} ao autenticar.`;
     try {
-      // Chamada à API (exemplo)
-      // const resp = await fetch("/api/login", { method:"POST", body: JSON.stringify({ email, senha }) });
-      // if (!resp.ok) throw new Error("Credenciais inválidas");
-      await new Promise(r => setTimeout(r, 600)); // simulação
-      onSuccess?.({ email });
-    } catch (e: any) {
-      const msg = e.message || "Erro ao autenticar.";
-      setErrors(msg);
-      onError?.(msg);
-    } finally {
-      setLoading(false);
+      if (contentType.includes("application/json")) {
+        const errorData = await resp.json();
+        errorMessage = errorData?.message || errorMessage;
+      } else {
+        const text = await resp.text();
+        if (text) errorMessage = text;
+      }
+    } catch {
+      // mantém errorMessage padrão
     }
+    throw new Error(errorMessage);
   }
+
+  await new Promise((r) => setTimeout(r, 600));
+  onSuccess?.({ email });
+} catch (e: any) {
+  const msg = e?.message || "Erro ao autenticar.";
+  setErrors(msg);
+  onError?.(msg);
+} finally {
+  setLoading(false);
+}
 
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
