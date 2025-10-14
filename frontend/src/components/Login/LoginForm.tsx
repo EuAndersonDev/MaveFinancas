@@ -33,13 +33,13 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
     }
     setErrors(null);
     setLoading(true);
-   const API_BASE = (import.meta as any)?.env?.VITE_API_URL ?? "";
-// ...existing code...
+   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+// Chamada de autenticação
 try {
-  const resp = await fetch(`${API_BASE}/api/login`, {
+  const resp = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, senha }),
+    body: JSON.stringify({ email, password: senha }),
   });
 
   if (!resp.ok) {
@@ -61,13 +61,15 @@ try {
 
   await new Promise((r) => setTimeout(r, 600));
   onSuccess?.({ email });
-} catch (e: any) {
-  const msg = e?.message || "Erro ao autenticar.";
+} catch (e) {
+  const errObj = e as Error;
+  const msg = errObj?.message || "Erro ao autenticar.";
   setErrors(msg);
   onError?.(msg);
 } finally {
   setLoading(false);
 }
+  }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -77,7 +79,7 @@ try {
           id="login-email"
           type="email"
           autoComplete="email"
-          placeholder="seu@email.com"
+          placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
@@ -122,3 +124,4 @@ try {
     </form>
   );
 }
+ 

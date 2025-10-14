@@ -44,8 +44,9 @@ export default function SignupForm({ onSuccess, onError, onGoLogin }: SignupForm
       // if(!r.ok) throw new Error("Falha ao criar conta");
       await new Promise(r => setTimeout(r, 700));
       onSuccess?.();
-    } catch (e: any) {
-      const msg = e.message || "Erro ao criar conta.";
+    } catch (e) {
+      const errObj = e as Error;
+      const msg = errObj.message || "Erro ao criar conta.";
       setErrors(msg);
       onError?.(msg);
     } finally {
@@ -60,7 +61,7 @@ export default function SignupForm({ onSuccess, onError, onGoLogin }: SignupForm
         <input
           id="signup-username"
           type="text"
-          placeholder="seu_nome"
+          placeholder="Nome de usuário"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           disabled={loading}
@@ -73,7 +74,7 @@ export default function SignupForm({ onSuccess, onError, onGoLogin }: SignupForm
           id="signup-email"
           type="email"
           autoComplete="email"
-          placeholder="voce@email.com"
+          placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}

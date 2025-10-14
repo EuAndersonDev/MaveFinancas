@@ -10,3 +10,9 @@ body {
   margin: 0;
   font-family: system-ui, sans-serif;
 }
+
+:root {
+  --primary: #39BE00;
+  --primary-hover: #16a34a;
+  --primary-focus-ring: rgba(34,197,94,0.25);
+}
