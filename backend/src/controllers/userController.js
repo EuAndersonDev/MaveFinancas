@@ -4,11 +4,21 @@ const jwt = require('jsonwebtoken');
 
 const createUser = async (req, res) => {
     const { name, email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    }
     try {
         const user = await userModel.createUser({ name, email, password });
         return res.status(201).json(user);
     } catch (error) {
         console.log(error);
+        if (error?.code === 'EMAIL_EXISTS') {
+            return res.status(409).json({ error: 'E-mail já cadastrado' });
+        }
+        // Caso venha de violação UNIQUE no banco
+        if (error?.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ error: 'E-mail já cadastrado' });
+        }
         return res.status(500).json({ error: "Failed to create user" });
     }
 };

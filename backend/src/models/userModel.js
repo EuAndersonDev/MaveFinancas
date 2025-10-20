@@ -1,5 +1,6 @@
 const connection = require('../config/db');
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 
 // Valor inicial padrão para a conta criada automaticamente ao registrar um usuário
 const DEFAULT_INITIAL_BALANCE = 0.00;
@@ -13,15 +14,23 @@ const createUser = async (user) => {
     try {
         await conn.beginTransaction();
 
+        // 0. Verificar se e-mail já existe
+        const [existing] = await conn.execute('SELECT id FROM user WHERE email = ? LIMIT 1', [email]);
+        if (existing.length > 0) {
+            const err = new Error('E-mail já cadastrado');
+            err.code = 'EMAIL_EXISTS';
+            throw err;
+        }
+
         // 1. Criar usuário
-        const userQuery = "INSERT INTO user (name, email, password) VALUES (?, ?, ?)";
-        const [userResult] = await conn.execute(userQuery, [name || null, email || null, hash || null]);
-        const userId = userResult.insertId;
+        const userId = uuidv4();
+        const userQuery = "INSERT INTO user (id, name, email, password) VALUES (?, ?, ?, ?)";
+        await conn.execute(userQuery, [userId, name || null, email || null, hash || null]);
 
         // 2. Criar conta vinculada
-        const accountQuery = "INSERT INTO account (balance, user_id) VALUES (?, ?)";
-        const [accountResult] = await conn.execute(accountQuery, [DEFAULT_INITIAL_BALANCE, userId]);
-        const accountId = accountResult.insertId;
+        const accountId = uuidv4();
+        const accountQuery = "INSERT INTO account (id, balance, user_id) VALUES (?, ?, ?)";
+        await conn.execute(accountQuery, [accountId, DEFAULT_INITIAL_BALANCE, userId]);
 
         await conn.commit();
 

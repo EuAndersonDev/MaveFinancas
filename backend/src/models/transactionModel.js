@@ -1,11 +1,13 @@
 const connection = require('../config/db.js');
+const { v4: uuidv4 } = require('uuid');
 
 const addTransaction = async (transaction) => {
     const dataUTC = new Date().toISOString().split("T")[0];
     const { description, amount, date, type, user_id, account_id } = transaction;
-    const finalDate = date || dataUTC; 
-    const query = "INSERT INTO transaction (description, amount, date, type, user_id, account_id) VALUES (?, ?, ?, ?, ?, ?)";
-    const [result] = await connection.execute(query, [description, amount, finalDate, type, user_id, account_id]);
+    const finalDate = date || dataUTC;
+    const id = uuidv4();
+    const query = "INSERT INTO transaction (id, description, amount, date, type, user_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    await connection.execute(query, [id, description, amount, finalDate, type, user_id, account_id]);
 
     let balanceQuery;
     if (type === 'withdrawal') {
@@ -17,7 +19,7 @@ const addTransaction = async (transaction) => {
         await connection.execute(balanceQuery, [amount, account_id]);
     }
 
-    return result;
+    return { id, description, amount, date: finalDate, type, user_id, account_id };
 };
 
 const getAllTransactions = async () => {
