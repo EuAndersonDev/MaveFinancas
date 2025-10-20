@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./loginForm.module.css";
 import Button from "../Button/Button";
+import Swal from "sweetalert2";
 
 interface LoginFormProps {
   onSuccess?: (data: { email: string }) => void;
@@ -29,46 +30,64 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
     if (err) {
       setErrors(err);
       onError?.(err);
+      await Swal.fire({
+        icon: "error",
+        title: "Ops!",
+        text: err,
+        confirmButtonText: "Ok",
+      });
       return;
     }
     setErrors(null);
     setLoading(true);
-   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-// Chamada de autenticação
-try {
-  const resp = await fetch(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password: senha }),
-  });
-
-  if (!resp.ok) {
-    const contentType = resp.headers.get("content-type") || "";
-    let errorMessage = `Erro ${resp.status} ao autenticar.`;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+    // Chamada de autenticação
     try {
-      if (contentType.includes("application/json")) {
-        const errorData = await resp.json();
-        errorMessage = errorData?.message || errorMessage;
-      } else {
-        const text = await resp.text();
-        if (text) errorMessage = text;
-      }
-    } catch {
-      // mantém errorMessage padrão
-    }
-    throw new Error(errorMessage);
-  }
+      const resp = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: senha }),
+      });
 
-  await new Promise((r) => setTimeout(r, 600));
-  onSuccess?.({ email });
-} catch (e) {
-  const errObj = e as Error;
-  const msg = errObj?.message || "Erro ao autenticar.";
-  setErrors(msg);
-  onError?.(msg);
-} finally {
-  setLoading(false);
-}
+      if (!resp.ok) {
+        const contentType = resp.headers.get("content-type") || "";
+        let errorMessage = `Erro ${resp.status} ao autenticar.`;
+        try {
+          if (contentType.includes("application/json")) {
+            const errorData = await resp.json();
+            errorMessage = errorData?.message || errorMessage;
+          } else {
+            const text = await resp.text();
+            if (text) errorMessage = text;
+          }
+        } catch {
+          // mantém errorMessage padrão
+        }
+        throw new Error(errorMessage);
+      }
+
+      await new Promise((r) => setTimeout(r, 600));
+      await Swal.fire({
+        icon: "success",
+        title: "Login realizado!",
+        text: "Bem-vindo de volta!",
+        confirmButtonText: "Ok",
+      });
+      onSuccess?.({ email });
+    } catch (e) {
+      const errObj = e as Error;
+      const msg = errObj?.message || "Erro ao autenticar.";
+      setErrors(msg);
+      onError?.(msg);
+      await Swal.fire({
+        icon: "error",
+        title: "Erro ao autenticar",
+        text: msg,
+        confirmButtonText: "Ok",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -90,7 +109,7 @@ try {
         <label htmlFor="login-senha">Senha</label>
         <input
           id="login-senha"
-            type="password"
+          type="password"
           autoComplete="current-password"
           placeholder="••••••••"
           value={senha}
@@ -124,4 +143,3 @@ try {
     </form>
   );
 }
- 

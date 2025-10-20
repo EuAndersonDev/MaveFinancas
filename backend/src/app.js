@@ -20,6 +20,7 @@ app.use('/auth', require('./routes/authRoutes'));
 app.use('/transactions', require('./routes/transactionsRoutes'));
 app.use('/accounts', require('./routes/accountsRoutes'));
 app.use('/users', require('./routes/usersRoutes'));
+app.use('/dashboard', require('./routes/dashboardRoutes'));
 
 // Middleware 404
 app.use((req, res, next) => {

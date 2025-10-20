@@ -4,3 +4,5 @@ const router = express.Router();
 
 
 router.get('/dashboard', dashboardController.getDashboard);
+
+module.exports = router;

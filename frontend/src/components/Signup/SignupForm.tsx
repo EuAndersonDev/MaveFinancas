@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import styles from "../Login/loginForm.module.css";
 import Button from "../Button/Button";
 
@@ -17,6 +19,7 @@ export default function SignupForm({ onSuccess, onError, onGoLogin }: SignupForm
   const [confirmSenha, setConfirmSenha] = useState("");
   const [errors, setErrors] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   function validate() {
     if (!username.trim() || !email.trim() || !senha.trim() || !confirmSenha.trim())
@@ -34,21 +37,70 @@ export default function SignupForm({ onSuccess, onError, onGoLogin }: SignupForm
     if (err) {
       setErrors(err);
       onError?.(err);
+      await Swal.fire({
+        icon: "error",
+        title: "Ops!",
+        text: err,
+        confirmButtonText: "Ok",
+      });
       return;
     }
     setErrors(null);
     setLoading(true);
     try {
-      // Exemplo de chamada:
-      // const r = await fetch("/api/signup",{method:"POST", body: JSON.stringify({ username,email,senha })});
-      // if(!r.ok) throw new Error("Falha ao criar conta");
-      await new Promise(r => setTimeout(r, 700));
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+      const resp = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: username,
+          email,
+          password: senha,
+        }),
+      });
+
+      if (!resp.ok) {
+        const contentType = resp.headers.get("content-type") || "";
+        let errorMessage = `Erro ${resp.status} ao criar conta.`;
+        try {
+          if (contentType.includes("application/json")) {
+            const errorData = await resp.json();
+            errorMessage = errorData?.message || errorMessage;
+          } else {
+            const text = await resp.text();
+            if (text) errorMessage = text;
+          }
+        } catch {}
+        if (resp.status === 409 || /duplicate|ER_DUP_ENTRY/i.test(errorMessage)) {
+          errorMessage = "E-mail já cadastrado.";
+        }
+        throw new Error(errorMessage);
+      }
+
+      await new Promise((r) => setTimeout(r, 600));
+      await Swal.fire({
+        icon: "success",
+        title: "Conta criada!",
+        text: "Você será redirecionado para a tela de login.",
+        confirmButtonText: "Ok",
+      });
       onSuccess?.();
+      if (onGoLogin) {
+        onGoLogin();
+      } else {
+        router.push("/login");
+      }
     } catch (e) {
       const errObj = e as Error;
       const msg = errObj.message || "Erro ao criar conta.";
       setErrors(msg);
       onError?.(msg);
+      await Swal.fire({
+        icon: "error",
+        title: "Erro no cadastro",
+        text: msg,
+        confirmButtonText: "Ok",
+      });
     } finally {
       setLoading(false);
     }

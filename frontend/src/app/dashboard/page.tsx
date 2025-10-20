@@ -1,4 +1,4 @@
-import Header from "@/components/Header/Header";
+import Header from "@/components/header/header";
 import SummaryCards from "@/components/Dashboard/SummaryCards/SummaryCards";
 import BalanceHero from "@/components/Dashboard/BalanceHero/BalanceHero";
 import DonutCard from "@/components/Dashboard/DonutCard/DonutCard";
