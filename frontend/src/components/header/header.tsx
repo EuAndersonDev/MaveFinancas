@@ -25,7 +25,7 @@ export default function Header({ userName = "Alicia Koch" }: HeaderProps) {
 
   const links = [
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/transacoes", label: "Transações" },
+    { href: "/transactions", label: "Transações" },
     { href: "/assinatura", label: "Assinatura" },
   ];
 
