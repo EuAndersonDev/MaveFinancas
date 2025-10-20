@@ -1,0 +1,9 @@
+.hero { background: #161716; border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 24px 20px; display: flex; align-items: flex-end; justify-content: space-between; }
+.kpiLabel { color: var(--gray); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.kpiValue { color: var(--white); font-size: 32px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.btnPrimary { background: var(--green); color: #fff; border: none; border-radius: 100px; padding: 6px 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+.row { display: flex; gap: 20px; align-items: center; }
+.card { background: var(--surface-03); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 20px; }
+.smallTitle { color: var(--gray); font-size: 13px; font-weight: 600; }
+.smallValue { color: var(--white); font-size: 22px; font-weight: 700; }

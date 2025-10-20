@@ -1,0 +1,14 @@
+.card { background: var(--card-dark); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 20px; height: auto; max-height: var(--tx-card-max, 640px); display: flex; flex-direction: column; overflow: hidden; }
+
+.title { font-size: 16px; color: var(--white); font-weight: 700; margin-bottom: 10px; }
+
+.scroll { overflow: auto; flex: 1; min-height: 0; }
+
+.table { width: 100%; border-collapse: collapse; }
+
+.table th, .table td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--stroke); }
+.table th { color: var(--gray); font-weight: 600; font-size: 12px; }
+.table td { color: var(--white); font-size: 13px; }
+
+.table td.income { color: #39BE00; font-weight: 700; }
+.table td.expense { color: #E93030; font-weight: 700; }

@@ -1,0 +1,10 @@
+.card { background: var(--card-dark); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 14px; height: var(--analytics-row-height, 340px); overflow: hidden; }
+.title { font-size: 16px; font-weight: 700; color: var(--white); }
+.scroll { overflow: auto; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; flex-direction: column; gap: 8px; }
+.head { display: flex; align-items: center; justify-content: space-between; }
+.label { color: var(--white); font-weight: 700; font-size: 13px; }
+.percent { color: var(--white); font-weight: 700; font-size: 13px; }
+.barBg { background: var(--surface-03); height: 10px; border-radius: 1000px; overflow: hidden; }
+.barFill { background: #71717A; height: 100%; border-radius: 1000px; }
+.value { color: var(--white); font-size: 14px; opacity: .6; font-weight: 600; }

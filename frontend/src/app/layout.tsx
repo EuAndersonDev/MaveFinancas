@@ -1,22 +1,23 @@
-import "./globals.css";
-import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
+import "./globals.css";
 
 const mulish = Mulish({
-  subsets: ["latin"],
   variable: "--font-mulish",
-  display: "swap",
+  subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Mave Finanças",
-  description: "Plataforma Mave Finanças",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="pt-BR" className={`${mulish.variable}`}>
-      <body className={mulish.className}>{children}</body>
+    <html lang="pt-BR">
+      <body className={`${mulish.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
+
+

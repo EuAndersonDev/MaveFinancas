@@ -1,0 +1,7 @@
+.card { background: var(--card-dark); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 14px; display: flex; flex-direction: column; gap: 10px; height: var(--analytics-row-height, 340px); width: 100%; overflow: hidden; }
+.wrap { display: flex; gap: 14px; align-items: center; justify-content: center; }
+.legend { display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; margin-top: 10px; }
+.legendItem { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.legendLeft { display: flex; align-items: center; gap: 6px; color: var(--gray); font-size: 13px; font-weight: 600; }
+.percent { color: var(--white); font-size: 13px; font-weight: 700; }
+.iconBox { background: var(--surface-03); border: 1px solid var(--stroke); border-radius: 8.533px; padding: 6px; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; }

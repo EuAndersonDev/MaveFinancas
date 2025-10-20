@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(6, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.card {
+  grid-column: span 12;
+  background: var(--surface-03);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 104px;
+  height: 100%;
+  gap: 6px;
+}
+
+.investido {
+  background: #161716;
+}
+
+.span4 { grid-column: span 4; }
+
+.title { font-size: 13px; color: var(--gray); font-weight: 600; }
+
+.value { font-size: 24px; font-weight: 800; color: var(--white); line-height: 1.2; }
+
+.trend { font-size: 13px; color: var(--green); font-weight: 700; }
+
+.negative { color: var(--red); }
+
+.trendEmpty { visibility: hidden; }

@@ -6,13 +6,90 @@
   padding: 0;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-}
-
 :root {
+  /* Tokens do dashboard-mave */
+  --bg-01: #0b0b0d;
+  --card-dark: #161716;
+  --white: #ffffff;
+  --green: #39be00;
+  --red: #e93030;
+  --gray: #71717a;
+  --stroke: rgba(255, 255, 255, 0.08);
+  --surface-03: rgba(255, 255, 255, 0.03);
+
+  /* Tokens do login/signup (modo claro padrão) */
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Primary colors para botões e componentes */
   --primary: #39BE00;
   --primary-hover: #16a34a;
   --primary-focus-ring: rgba(34,197,94,0.25);
+
+  /* Radius */
+  --radius-lg: 20px;
+  --radius-sm: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Estilos específicos para a dashboard (dark theme) */
+[data-theme="dashboard"],
+.dashboard-layout {
+  --background: var(--bg-01);
+  --foreground: var(--white);
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-mulish), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Utilitários globais do dashboard */
+.card-dark {
+  background: var(--card-dark);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+.btn-pill {
+  border-radius: 100px;
+  padding: 8px 16px;
+}
+
+.muted {
+  color: var(--gray);
 }
