@@ -31,7 +31,7 @@ export default async function TransactionsPage() {
 
 	return (
 		<main>
-			<Header userName="Matheus" />
+			<Header />
 			<div className={styles.container}>
 				<div className={styles.toolbar}>
 					<h2 className={styles.title}>Transações</h2>

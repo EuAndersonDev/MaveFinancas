@@ -6,8 +6,9 @@ import CategoryBarsCard from "@/components/Dashboard/CategoryBarsCard/CategoryBa
 import SummaryCards from "@/components/Dashboard/SummaryCards/SummaryCards";
 import TransactionsSection from "@/components/Dashboard/TransactionsSection/TransactionsSection";
 import styles from "@/app/dashboard/page.module.css";
+import { useAuth } from "@/app/context/context";
 
-type Tx = { id: string; date: string; description: string; category: string; amount: number };
+type Tx = { id: string; date: string; name: string; category: string; amount: number };
 type DonutItem = { label: string; value: number; color: string; icon?: string };
 type CategoryItem = { name: string; percent: number; value: string };
 type DashboardData = {
@@ -24,7 +25,13 @@ type DashboardData = {
 
 export default function DashboardClient({ initial }: { initial: DashboardData }) {
   const [transactions, setTransactions] = useState<Tx[]>(initial.transactions);
+  const { user } = useAuth();
   const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  
+  // Usa o ID do usuário logado ou um mock se não estiver logado
+  const userId = user?.id?.toString() || "550e8400-e29b-41d4-a716-446655440000";
+  const accountId = "650e8400-e29b-41d4-a716-446655440001"; // TODO: buscar do backend
+  
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Dashboard</h2>
@@ -33,11 +40,11 @@ export default function DashboardClient({ initial }: { initial: DashboardData })
           <div className={styles.leftFull}>
             <BalanceHero
               balance={initial.balance}
-              userId="mock-user"
-              accountId="mock-account"
+              userId={userId}
+              accountId={accountId}
               onTransactionCreated={(created) => {
                 setTransactions(prev => [
-                  { id: created.id, date: created.date?.slice(5,10) || "", description: created.description, category: created.type === "deposit" ? "Receita" : "Despesa", amount: created.amount },
+                  { id: created.id, date: created.date?.slice(5,10) || "", name: created.name || created.description, category: created.category_name || "Outros", amount: created.amount },
                   ...prev,
                 ]);
               }}

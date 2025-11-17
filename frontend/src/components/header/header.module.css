@@ -75,6 +75,10 @@
   font-weight: 700;
 }
 
+.userDropdownWrapper {
+  position: relative;
+}
+
 .user {
   display: flex;
   align-items: center;
@@ -83,6 +87,13 @@
   border-radius: 10px;
   background: #141414;        /* Background 02 */
   border: 1px solid rgba(255, 255, 255, 0.10);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.user:hover {
+  background: #1A1A1A;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .userIconWrap {
@@ -100,6 +111,55 @@
   font-size: 14px;
   font-weight: 600;
   font-family: "Mulish", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.chevron {
+  color: #B8B8B8;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #B8B8B8;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Mulish", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
+}
+
+.dropdownItem svg {
+  flex-shrink: 0;
 }
 
 @media (max-width: 1280px) {

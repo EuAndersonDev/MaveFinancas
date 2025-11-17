@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const dashboardController = require('../controllers/dashboardController');
 
-// GET /dashboard (ou o path em que for montado no app.js)
-router.get('/', (req, res) => {
-  res.json({ ok: true, message: 'Dashboard route up' });
-});
+// GET /dashboard
+router.get('/', dashboardController.getDashboard);
 
-// Adicione outras rotas aqui conforme necessário
 module.exports = router;

@@ -3,18 +3,17 @@ import React from "react";
 import dynamic from "next/dynamic";
 import styles from "./DonutCard.module.css";
 import SvgIconInline from "@/components/SvgIconInline/SvgIconInline";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Registra os elementos necessários do Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Doughnut = dynamic(() => import("react-chartjs-2").then((m) => m.Doughnut), { ssr: false });
-
-const useRegisterChart = () => {
-  React.useEffect(() => {
-    (async () => {
-      const ChartJS = await import("chart.js");
-      const { Chart, ArcElement, Tooltip, Legend } = ChartJS;
-      Chart.register(ArcElement, Tooltip, Legend);
-    })();
-  }, []);
-};
 
 type DonutCardProps = {
   title?: string;
@@ -29,8 +28,6 @@ export default function DonutCard({
     { label: "Investimentos", value: 18, color: "#FFFFFF", icon: "/16_Piggy Bank.svg" },
   ],
 }: DonutCardProps) {
-  useRegisterChart();
-
   const chartData = {
     labels: data.map((d) => d.label),
     datasets: [

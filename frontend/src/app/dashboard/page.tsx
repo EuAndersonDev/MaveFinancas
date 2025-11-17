@@ -1,8 +1,12 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Header from "@/components/Header/Header";
 import styles from "./page.module.css";
 import DashboardClient from "@/components/Dashboard/DashboardClient";
+import { useAuth } from "@/app/context/context";
 
-type Tx = { id: string; date: string; description: string; category: string; amount: number };
+type Tx = { id: string; date: string; name: string; category: string; amount: number };
 type DonutItem = { label: string; value: number; color: string; icon?: string };
 type CategoryItem = { name: string; percent: number; value: string };
 type DashboardData = {
@@ -17,14 +21,9 @@ type DashboardData = {
   transactions: Tx[];
 };
 
-// Centralizador de dados do Dashboard
-// Troque o retorno mock abaixo por um fetch ao seu backend, por exemplo:
-// const res = await fetch(`${process.env.API_URL}/dashboard`, { cache: "no-store" });
-// const data: DashboardData = await res.json();
-async function getDashboardData(): Promise<DashboardData> {
-  // MOCK ajustado com dados coerentes
+function getMockData(): DashboardData {
   return {
-    balance: 3120, // total de receitas (8400) - despesas (5280) = 3120
+    balance: 3120,
     kpis: {
       invested: 4000,
       income: { value: 8400, trend: "+4,5%" },
@@ -41,42 +40,68 @@ async function getDashboardData(): Promise<DashboardData> {
       { name: "Transporte", percent: 20, value: "R$ 980,00" },
       { name: "Saúde", percent: 10, value: "R$ 520,00" },
       { name: "Lazer", percent: 10, value: "R$ 610,00" },
-
     ],
     transactions: [
-      { id: "1", date: "01/10", description: "Salário", category: "Receita", amount: 6000 },
-      { id: "2", date: "03/10", description: "Pix recebido", category: "Receita", amount: 400 },
-      { id: "3", date: "05/10", description: "Freelance", category: "Receita", amount: 2000 },
-      { id: "4", date: "06/10", description: "Supermercado", category: "Alimentação", amount: -420.5 },
-      { id: "5", date: "07/10", description: "Conta de luz", category: "Moradia", amount: -210.35 },
-      { id: "6", date: "07/10", description: "Água", category: "Moradia", amount: -95.8 },
-      { id: "7", date: "08/10", description: "Internet", category: "Moradia", amount: -120 },
-      { id: "8", date: "09/10", description: "Almoço", category: "Alimentação", amount: -58.9 },
-      { id: "9", date: "10/10", description: "Farmácia", category: "Saúde", amount: -134.9 },
-      { id: "10", date: "11/10", description: "Gasolina", category: "Transporte", amount: -210 },
-      { id: "11", date: "12/10", description: "Metrô e ônibus", category: "Transporte", amount: -38 },
-      { id: "12", date: "13/10", description: "Cinema", category: "Lazer", amount: -52 },
-      { id: "13", date: "14/10", description: "Restaurante", category: "Alimentação", amount: -145.7 },
-      { id: "14", date: "15/10", description: "Pix recebido", category: "Receita", amount: 0 }, // só pra completar o fluxo
-      { id: "15", date: "16/10", description: "Plano de saúde", category: "Saúde", amount: -385 },
-      { id: "16", date: "17/10", description: "Roupas", category: "Lazer", amount: -178 },
-      { id: "17", date: "18/10", description: "Almoço com amigos", category: "Lazer", amount: -92 },
-      { id: "18", date: "19/10", description: "Uber", category: "Transporte", amount: -48.9 },
-      { id: "19", date: "20/10", description: "Material de limpeza", category: "Moradia", amount: -95 },
-      { id: "20", date: "22/10", description: "Mercado", category: "Alimentação", amount: -210 },
+      { id: "1", date: "01/10", name: "Salário", category: "Receita", amount: 6000 },
+      { id: "2", date: "03/10", name: "Pix recebido", category: "Receita", amount: 400 },
+      { id: "3", date: "05/10", name: "Freelance", category: "Receita", amount: 2000 },
+      { id: "4", date: "06/10", name: "Supermercado", category: "Alimentação", amount: -420.5 },
+      { id: "5", date: "07/10", name: "Conta de luz", category: "Moradia", amount: -210.35 },
     ],
   };
 }
 
-export const metadata = {
-  title: "Dashboard - Mave Finanças",
-};
+export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData>(getMockData());
+  const [loading, setLoading] = useState(true);
+  const { user, token } = useAuth();
 
-export default async function DashboardPage() {
-  const data = await getDashboardData();
+  useEffect(() => {
+    async function fetchDashboard() {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      try {
+        const res = await fetch(`${API_URL}/dashboard`, {
+          headers: {
+            'x-user-id': user.id.toString(),
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+        });
+
+        if (!res.ok) {
+          console.error('Erro ao buscar dashboard:', res.status);
+          return;
+        }
+
+        const dashboardData = await res.json();
+        setData(dashboardData);
+      } catch (error) {
+        console.error('Erro na requisição da dashboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboard();
+  }, [user, token]);
+
+  if (loading) {
+    return (
+      <main>
+        <Header />
+        <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando dashboard...</div>
+      </main>
+    );
+  }
+
   return (
     <main>
-      <Header userName="Matheus" />
+      <Header />
       <DashboardClient initial={data} />
     </main>
   );

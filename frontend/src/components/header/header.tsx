@@ -4,6 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
+import { useAuth } from "@/app/context/context";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   userName?: string;
@@ -20,8 +23,21 @@ function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function Header({ userName = "Alicia Koch" }: HeaderProps) {
+export default function Header({ userName }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const [hydrated, setHydrated] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const nameToShow = userName || (hydrated ? user?.name : undefined) || "Usuário";
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const links = [
     { href: "/dashboard", label: "Dashboard" },
@@ -61,12 +77,52 @@ export default function Header({ userName = "Alicia Koch" }: HeaderProps) {
           </nav>
         </div>
 
-        {/* Direita: “quadradinho” do usuário */}
-        <div className={styles.user} title={userName}>
-          <span className={styles.userIconWrap}>
-            <GitHubIcon />
-          </span>
-          <span className={styles.userName}>{userName}</span>
+        {/* Direita: dropdown do usuário */}
+        <div className={styles.userDropdownWrapper}>
+          <button 
+            className={styles.user} 
+            onClick={toggleDropdown}
+            title={nameToShow}
+          >
+            <span className={styles.userIconWrap}>
+              <GitHubIcon />
+            </span>
+            <span className={styles.userName}>{nameToShow}</span>
+            <svg 
+              className={`${styles.chevron} ${dropdownOpen ? styles.chevronOpen : ''}`}
+              width="16" 
+              height="16" 
+              viewBox="0 0 16 16" 
+              fill="none"
+            >
+              <path 
+                d="M4 6L8 10L12 6" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          {dropdownOpen && (
+            <div className={styles.dropdownMenu}>
+              <button 
+                onClick={handleLogout} 
+                className={styles.dropdownItem}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path 
+                    d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6M10.6667 11.3333L14 8M14 8L10.6667 4.66667M14 8H6" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Sair
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

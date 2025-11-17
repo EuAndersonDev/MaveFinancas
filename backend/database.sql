@@ -21,18 +21,31 @@ CREATE TABLE IF NOT EXISTS account (
     CONSTRAINT fk_account_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+-- Tabela de categorias
+CREATE TABLE IF NOT EXISTS category (
+    id CHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type ENUM('income', 'expense') NOT NULL,
+    icon VARCHAR(255) NULL,
+    color VARCHAR(7) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT uq_category_name_type UNIQUE (name, type)
+);
+
 CREATE TABLE IF NOT EXISTS transaction (
     id CHAR(36) PRIMARY KEY,
-    description VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     amount DECIMAL(19,2) NOT NULL,
     date DATE NOT NULL,
-    type ENUM('withdrawal', 'deposit') NOT NULL,
+    category_id CHAR(36) NOT NULL,
     user_id CHAR(36) NOT NULL,
     account_id CHAR(36) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_transaction_user FOREIGN KEY (user_id) REFERENCES user(id),
-    CONSTRAINT fk_transaction_account FOREIGN KEY (account_id) REFERENCES account(id)
+    CONSTRAINT fk_transaction_account FOREIGN KEY (account_id) REFERENCES account(id),
+    CONSTRAINT fk_transaction_category FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
 -- Seed de exemplo usando UUID() do MySQL

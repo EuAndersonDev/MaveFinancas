@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable from "@/components/Dashboard/TransactionsTable/TransactionsTable";
 
-type Tx = { id: string; date: string; description: string; category: string; amount: number };
+type Tx = { id: string; date: string; name: string; category: string; amount: number };
 
 export default function TransactionsSection({ data }: { data: Tx[] }) {
   const [items, setItems] = useState<Tx[]>(data);

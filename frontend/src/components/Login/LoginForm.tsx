@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "./loginForm.module.css";
 import Button from "../Button/Button";
 import Swal from "sweetalert2";
+import { useAuth } from "@/app/context/context";
 
 interface LoginFormProps {
   onSuccess?: (data: { email: string }) => void;
@@ -16,6 +17,7 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
   const [senha, setSenha] = useState("");
   const [errors, setErrors] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const auth = useAuth();
 
   function validate() {
     if (!email.trim() || !senha.trim()) return "Preencha todos os campos.";
@@ -66,11 +68,23 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
         throw new Error(errorMessage);
       }
 
-      await new Promise((r) => setTimeout(r, 600));
+      const contentTypeOk = resp.headers.get("content-type")?.includes("application/json");
+      const data = contentTypeOk ? await resp.json() : null;
+      const token = data?.data?.token as string | undefined;
+      const user = data?.data?.user as { id: string | number; name: string; email: string } | undefined;
+
+      if (!token || !user) {
+        throw new Error("Resposta de login inválida.");
+      }
+
+      // Persistir no contexto/localStorage
+      auth.login({ token, user });
+
+      await new Promise((r) => setTimeout(r, 200));
       await Swal.fire({
         icon: "success",
         title: "Login realizado!",
-        text: "Bem-vindo de volta!",
+        text: `Bem-vindo, ${user.name}!`,
         confirmButtonText: "Ok",
       });
       onSuccess?.({ email });
