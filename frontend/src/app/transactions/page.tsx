@@ -1,5 +1,5 @@
-import Header from "@/components/header/header";
-import Button from "@/components/Button/Button";
+import Header from "@/components/Header/Header";
+import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable, { Transaction } from "@/components/Transactions/TransactionsTable";
 import styles from "./transactions.module.css";
 
@@ -35,7 +35,7 @@ export default async function TransactionsPage() {
 			<div className={styles.container}>
 				<div className={styles.toolbar}>
 					<h2 className={styles.title}>Transações</h2>
-					<Button>Adicionar Transação</Button>
+					<AddTransactionButton userId="mock-user" accountId="mock-account" />
 				</div>
 
 				<TransactionsTable data={data} />

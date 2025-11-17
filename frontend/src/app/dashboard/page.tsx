@@ -1,10 +1,6 @@
-import Header from "@/components/header/header";
-import SummaryCards from "@/components/Dashboard/SummaryCards/SummaryCards";
-import BalanceHero from "@/components/Dashboard/BalanceHero/BalanceHero";
-import DonutCard from "@/components/Dashboard/DonutCard/DonutCard";
-import CategoryBarsCard from "@/components/Dashboard/CategoryBarsCard/CategoryBarsCard";
-import TransactionsTable from "@/components/Dashboard/TransactionsTable/TransactionsTable";
+import Header from "@/components/Header/Header";
 import styles from "./page.module.css";
+import DashboardClient from "@/components/Dashboard/DashboardClient";
 
 type Tx = { id: string; date: string; description: string; category: string; amount: number };
 type DonutItem = { label: string; value: number; color: string; icon?: string };
@@ -78,32 +74,10 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
-  const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   return (
     <main>
       <Header userName="Matheus" />
-      <div className={styles.container}>
-        <h2 className={styles.title}>Dashboard</h2>
-        <section className={styles.gridMain}>
-          <div className={styles.leftCol}>
-            <div className={styles.leftFull}>
-              <BalanceHero balance={data.balance} />
-            </div>
-            <div className={styles.leftRow3}>
-              <div className={styles.col4}><SummaryCards data={[{ title: "Investido", value: brl(data.kpis.invested) }]} /></div>
-              <div className={styles.col4}><SummaryCards data={[{ title: "Receitas (mês)", value: brl(data.kpis.income.value), trend: data.kpis.income.trend }]} /></div>
-              <div className={styles.col4}><SummaryCards data={[{ title: "Despesas (mês)", value: brl(data.kpis.expenses.value), trend: data.kpis.expenses.trend, negative: true }]} /></div>
-            </div>
-            <div className={styles.leftRow2}>
-              <div className={styles.col4}><DonutCard data={data.distribution} /></div>
-              <div className={styles.col8}><CategoryBarsCard items={data.categories} /></div>
-            </div>
-          </div>
-          <div className={styles.rightCol}>
-            <TransactionsTable data={data.transactions} />
-          </div>
-        </section>
-      </div>
+      <DashboardClient initial={data} />
     </main>
   );
 }

@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Modal de Adicionar Transação
+
+Foi adicionado o componente `AddTransactionModal` reutilizável em `src/components/Transactions/AddTransactionModal.tsx` e um botão acoplado `AddTransactionButton`.
+
+Uso básico:
+
+```tsx
+import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
+
+export default function Toolbar() {
+	return (
+		<AddTransactionButton userId="mock-user" accountId="mock-account" />
+	);
+}
+```
+
+Props:
+- `userId` / `accountId`: IDs necessários pelo backend.
+- `onCreated(created)`: callback opcional para atualizar listagens locais.
+
+O modal envia `POST /transactions` com `{ description, amount, type, date, user_id, account_id }`. O campo de método de pagamento é apenas visual no momento.
