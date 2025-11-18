@@ -1,18 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable from "@/components/Dashboard/TransactionsTable/TransactionsTable";
 
 type Tx = { id: string; date: string; name: string; category: string; amount: number };
 
 export default function TransactionsSection({ data }: { data: Tx[] }) {
-  const [items, setItems] = useState<Tx[]>(data);
+  // Usa diretamente a prop para evitar estado desatualizado após criação de transação
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3 style={{ margin: 0 }}>Transações recentes</h3>
-      </div>
-      <TransactionsTable data={items} />
+      {/* Cabeçalho já é exibido dentro de TransactionsTable; poderia ser removido aqui se duplicado */}
+      <TransactionsTable data={data} />
     </div>
   );
 }

@@ -43,8 +43,32 @@ export default function DashboardClient({ initial }: { initial: DashboardData })
               userId={userId}
               accountId={accountId}
               onTransactionCreated={(created) => {
+                const rawDate: string | undefined = created.date;
+                let formatted = "";
+                if (rawDate) {
+                  // Aceita ISO (yyyy-mm-dd) ou já formatado dd/mm
+                  if (/^\d{4}-\d{2}-\d{2}/.test(rawDate)) {
+                    const [y, m, d] = rawDate.split("-");
+                    formatted = `${d}/${m}`;
+                  } else if (/^\d{2}\/\d{2}$/.test(rawDate)) {
+                    formatted = rawDate; // já no formato desejado
+                  } else {
+                    try {
+                      const dt = new Date(rawDate);
+                      if (!isNaN(dt.getTime())) {
+                        formatted = dt.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+                      }
+                    } catch {}
+                  }
+                }
                 setTransactions(prev => [
-                  { id: created.id, date: created.date?.slice(5,10) || "", name: created.name || created.description, category: created.category_name || "Outros", amount: created.amount },
+                  {
+                    id: created.id?.toString(),
+                    date: formatted,
+                    name: created.name || created.description || "Transação",
+                    category: created.category_name || created.category || "Outros",
+                    amount: created.amount,
+                  },
                   ...prev,
                 ]);
               }}

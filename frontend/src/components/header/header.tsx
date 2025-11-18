@@ -42,7 +42,6 @@ export default function Header({ userName }: HeaderProps) {
   const links = [
     { href: "/dashboard", label: "Dashboard" },
     { href: "/transactions", label: "Transações" },
-    { href: "/assinatura", label: "Assinatura" },
   ];
 
   const isActive = (href: string) =>

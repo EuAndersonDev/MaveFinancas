@@ -22,44 +22,15 @@ type DashboardData = {
   transactions: Tx[];
 };
 
-function getMockData(): DashboardData {
-  return {
-    balance: 3120,
-    kpis: {
-      invested: 4000,
-      income: { value: 8400, trend: "+4,5%" },
-      expenses: { value: 5280, trend: "+2,1%" },
-    },
-    distribution: [
-      { label: "Ganhos", value: 55, color: "#39BE00", icon: "/16_Trending Up.svg" },
-      { label: "Gastos", value: 30, color: "#E93030", icon: "/16_Trending Down.svg" },
-      { label: "Investimentos", value: 15, color: "#FFFFFF", icon: "/16_Piggy Bank.svg" },
-    ],
-    categories: [
-      { name: "Moradia", percent: 35, value: "R$ 1.850,00" },
-      { name: "Alimentação", percent: 25, value: "R$ 1.320,00" },
-      { name: "Transporte", percent: 20, value: "R$ 980,00" },
-      { name: "Saúde", percent: 10, value: "R$ 520,00" },
-      { name: "Lazer", percent: 10, value: "R$ 610,00" },
-    ],
-    transactions: [
-      { id: "1", date: "01/10", name: "Salário", category: "Receita", amount: 6000 },
-      { id: "2", date: "03/10", name: "Pix recebido", category: "Receita", amount: 400 },
-      { id: "3", date: "05/10", name: "Freelance", category: "Receita", amount: 2000 },
-      { id: "4", date: "06/10", name: "Supermercado", category: "Alimentação", amount: -420.5 },
-      { id: "5", date: "07/10", name: "Conta de luz", category: "Moradia", amount: -210.35 },
-    ],
-  };
-}
-
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData>(getMockData());
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const { user, token } = useAuth();
 
   useEffect(() => {
     async function fetchDashboard() {
       if (!user?.id) {
+        // Usuário não autenticado: apenas finaliza loading sem dados
         setLoading(false);
         return;
       }
@@ -80,7 +51,12 @@ export default function DashboardPage() {
         }
 
         const dashboardData = await res.json();
-        setData(dashboardData);
+        // Confere campos principais antes de setar
+        if (dashboardData && typeof dashboardData.balance === 'number') {
+          setData(dashboardData);
+        } else {
+          console.warn('Formato inesperado da dashboard', dashboardData);
+        }
       } catch (error) {
         console.error('Erro na requisição da dashboard:', error);
       } finally {
@@ -91,19 +67,16 @@ export default function DashboardPage() {
     fetchDashboard();
   }, [user, token]);
 
-  if (loading) {
-    return (
-      <main>
-        <Header />
-        <Loading />
-      </main>
-    );
-  }
-
   return (
     <main>
       <Header />
-      <DashboardClient initial={data} />
+      {loading && <Loading />}
+      {!loading && !data && (
+        <div style={{ padding: 24 }}>
+          <p>Faça login para visualizar sua dashboard.</p>
+        </div>
+      )}
+      {!loading && data && <DashboardClient initial={data} />}
     </main>
   );
 }
