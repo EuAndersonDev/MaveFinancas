@@ -1,5 +1,6 @@
 import { Mulish } from "next/font/google";
 import "./globals.css";
+import "../styles/sweetalert-dark.css";
 import { AuthProvider } from "./context/context";
 import AuthGuard from "@/components/AuthGuard/AuthGuard";
 

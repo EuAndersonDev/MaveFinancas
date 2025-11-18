@@ -30,7 +30,7 @@ export default function DashboardClient({ initial }: { initial: DashboardData })
   
   // Usa o ID do usuário logado ou um mock se não estiver logado
   const userId = user?.id?.toString() || "550e8400-e29b-41d4-a716-446655440000";
-  const accountId = "650e8400-e29b-41d4-a716-446655440001"; // TODO: buscar do backend
+  const accountId = user?.accountId || "650e8400-e29b-41d4-a716-446655440001";
   
   return (
     <div className={styles.container}>

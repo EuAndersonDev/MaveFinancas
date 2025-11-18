@@ -35,9 +35,18 @@ export default function Button({
       disabled={disabled || loading}
       {...rest}
     >
-      {leftIcon && <span className={styles.icon}>{leftIcon}</span>}
-      <span>{loading ? "Carregando..." : children}</span>
-      {rightIcon && <span className={styles.icon}>{rightIcon}</span>}
+      {loading ? (
+        <>
+          <span className={styles.spinner} />
+          <span>Carregando...</span>
+        </>
+      ) : (
+        <>
+          {leftIcon && <span className={styles.icon}>{leftIcon}</span>}
+          <span>{children}</span>
+          {rightIcon && <span className={styles.icon}>{rightIcon}</span>}
+        </>
+      )}
     </button>
   );
 }

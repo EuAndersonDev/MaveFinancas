@@ -49,14 +49,14 @@ export default function TransactionsTable({ data, onEdit, onDelete }: Transactio
 							<tr key={t.id} className={styles.row}>
 								<td className={styles.cellPrimary}>{t.nome}</td>
 												<td>
-													<span className={`${styles.pill} ${t.tipo === "Entrada" ? styles.pillIn : t.tipo === "Saída" ? styles.pillOut : styles.pillNeutral}`}>
+													<span className={`${styles.pill} ${t.valor > 0 ? styles.pillIn : styles.pillOut}`}>
 														{t.tipo}
 													</span>
 												</td>
 								<td>{t.categoria}</td>
 								<td>{t.metodo}</td>
 												<td>{t.data}</td>
-																<td className={`${styles.value} ${t.tipo === "Entrada" ? styles.valueIn : t.tipo === "Saída" ? styles.valueOut : styles.valueNeutral}`}>
+												<td className={`${styles.value} ${t.valor > 0 ? styles.valueIn : styles.valueOut}`}>
 									{formatCurrency(t.valor)}
 								</td>
 								<td className={styles.actions}>

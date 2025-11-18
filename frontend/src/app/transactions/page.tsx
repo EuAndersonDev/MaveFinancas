@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/context";
+import Swal from "@/lib/sweetalert";
 import Header from "@/components/Header/Header";
 import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable, { Transaction } from "@/components/Transactions/TransactionsTable";
+import Loading from "@/components/Loading/Loading";
 import styles from "./transactions.module.css";
 
 type BackendTransaction = {
@@ -82,7 +84,16 @@ export default function TransactionsPage() {
 	};
 
 	const handleDelete = async (id: string) => {
-		if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
+		const result = await Swal.fire({
+			title: "Tem certeza?",
+			text: "Esta ação não poderá ser desfeita!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Sim, excluir",
+			cancelButtonText: "Cancelar",
+		});
+
+		if (!result.isConfirmed) return;
 
 		try {
 			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/transactions/${id}`, {
@@ -93,8 +104,20 @@ export default function TransactionsPage() {
 
 			// Remove da lista local
 			setTransactions((prev) => prev.filter((t) => t.id !== id));
+
+			await Swal.fire({
+				icon: "success",
+				title: "Excluído!",
+				text: "Transação excluída com sucesso.",
+				timer: 2000,
+				showConfirmButton: false,
+			});
 		} catch (err: any) {
-			alert(err.message || "Erro ao excluir transação");
+			await Swal.fire({
+				icon: "error",
+				title: "Erro!",
+				text: err.message || "Erro ao excluir transação",
+			});
 		}
 	};
 
@@ -118,17 +141,17 @@ export default function TransactionsPage() {
 			<div className={styles.container}>
 				<div className={styles.toolbar}>
 					<h2 className={styles.title}>Transações</h2>
-					{user && (
+					{user && user.accountId && (
 						<AddTransactionButton
 							userId={user.id.toString()}
-							accountId={user.id.toString()}
+							accountId={user.accountId}
 							onCreated={handleTransactionCreated}
 						/>
 					)}
 				</div>
 
 				{loading ? (
-					<p>Carregando transações...</p>
+					<Loading />
 				) : error ? (
 					<p style={{ color: "red" }}>{error}</p>
 				) : (

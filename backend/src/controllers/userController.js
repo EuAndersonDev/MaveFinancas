@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const accountModel = require('../models/accountModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -40,6 +41,9 @@ const login = async (req, res) => {
         const ok = await bcrypt.compare(password, userDb.password);
         if (!ok) return res.status(401).json({ error: 'Credenciais inválidas' });
 
+        // Busca a conta do usuário
+        const account = await accountModel.getAccountByUserId(userDb.id);
+
         const token = jwt.sign(
             { sub: userDb.id, email: userDb.email },
             process.env.JWT_SECRET,
@@ -49,7 +53,12 @@ const login = async (req, res) => {
         return res.json({
             data: {
                 token,
-                user: { id: userDb.id, name: userDb.name, email: userDb.email }
+                user: { 
+                    id: userDb.id, 
+                    name: userDb.name, 
+                    email: userDb.email,
+                    accountId: account?.id || null
+                }
             }
         });
     } catch (e) {

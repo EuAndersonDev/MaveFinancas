@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
+import Swal from "@/lib/sweetalert";
 import styles from "../Login/loginForm.module.css";
 import Button from "../Button/Button";
 

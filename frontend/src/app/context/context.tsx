@@ -6,6 +6,7 @@ type User = {
 	id: string | number;
 	name: string;
 	email: string;
+	accountId?: string;
 };
 
 type AuthState = {
@@ -21,6 +22,7 @@ type LoginPayload = {
 type AuthContextType = AuthState & {
 	login: (payload: LoginPayload) => void;
 	logout: () => void;
+	loading: boolean;
 };
 
 const STORAGE_TOKEN_KEY = "mave:auth_token";
@@ -31,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [token, setToken] = useState<string | null>(null);
 	const [user, setUser] = useState<User | null>(null);
+	const [loading, setLoading] = useState(true);
 
 	// Carrega armazenamento apenas após hidratação para manter HTML consistente entre server e primeiro render client
 	useEffect(() => {
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (t) setToken(t);
 			if (raw) setUser(JSON.parse(raw));
 		} catch {}
+		setLoading(false);
 	}, []);
 
 	const login = (payload: LoginPayload) => {
@@ -60,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		} catch {}
 	};
 
-	const value = useMemo(() => ({ token, user, login, logout }), [token, user]);
+	const value = useMemo(() => ({ token, user, login, logout, loading }), [token, user, loading]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

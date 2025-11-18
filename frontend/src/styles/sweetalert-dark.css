@@ -1,0 +1,72 @@
+/* SweetAlert2 Dark Theme Customization */
+.swal-dark-popup {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.swal-dark-title {
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+
+.swal-dark-text {
+  color: #B8B8B8 !important;
+}
+
+.swal-dark-confirm {
+  background: #39BE00 !important;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: background 0.2s ease;
+}
+
+.swal-dark-confirm:hover {
+  background: #2ea000 !important;
+}
+
+.swal-dark-cancel {
+  background: #E93030 !important;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: background 0.2s ease;
+}
+
+.swal-dark-cancel:hover {
+  background: #d12020 !important;
+}
+
+/* Ícones */
+.swal2-icon.swal2-error {
+  border-color: #E93030 !important;
+  color: #E93030 !important;
+}
+
+.swal2-icon.swal2-success {
+  border-color: #39BE00 !important;
+  color: #39BE00 !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: #FFA500 !important;
+  color: #FFA500 !important;
+}
+
+.swal2-icon.swal2-info {
+  border-color: #3B82F6 !important;
+  color: #3B82F6 !important;
+}
+
+/* Input fields no modo escuro */
+.swal2-input {
+  background: #0F0E11 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  border-radius: 8px;
+}
+
+.swal2-input:focus {
+  border-color: #39BE00 !important;
+  box-shadow: 0 0 0 1px #39BE00 !important;
+}

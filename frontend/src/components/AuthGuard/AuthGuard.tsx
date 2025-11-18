@@ -7,11 +7,14 @@ import { useAuth } from "@/app/context/context";
 const publicRoutes = ["/login", "/signup", "/"];
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { token } = useAuth();
+  const { token, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    // Aguarda carregar o token do localStorage antes de fazer qualquer redirecionamento
+    if (loading) return;
+
     // Não faz nada na rota raiz (ela tem seu próprio redirecionamento)
     if (pathname === "/") {
       return;
@@ -25,7 +28,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     else if (token && pathname === "/login") {
       router.push("/dashboard");
     }
-  }, [token, pathname, router]);
+  }, [token, pathname, router, loading]);
 
   // Renderiza conteúdo normalmente
   return <>{children}</>;

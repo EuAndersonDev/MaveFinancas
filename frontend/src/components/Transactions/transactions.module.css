@@ -93,7 +93,7 @@
 }
 
 .valueIn {
-	color: #39BE00;
+	color: #39BE00 !important;
 	font-weight: 700;
 }
 
@@ -110,13 +110,13 @@
 }
 
 .valueOut {
-	color: #E93030;
+	color: #E93030 !important;
 	font-weight: 700;
 	white-space: nowrap;
 }
 
 .valueNeutral {
-	color: #FFFFFF;
+	color: #FFFFFF !important;
 	font-weight: 700;
 	white-space: nowrap;
 }

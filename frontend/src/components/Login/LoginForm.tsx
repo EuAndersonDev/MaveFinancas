@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./loginForm.module.css";
 import Button from "../Button/Button";
-import Swal from "sweetalert2";
+import Swal from "@/lib/sweetalert";
 import { useAuth } from "@/app/context/context";
 
 interface LoginFormProps {
@@ -90,12 +90,12 @@ export default function LoginForm({ onSuccess, onError, onCreateAccount }: Login
       onSuccess?.({ email });
     } catch (e) {
       const errObj = e as Error;
-      const msg = errObj?.message || "Erro ao autenticar.";
+      const msg = errObj?.message || "Credenciais inválidas";
       setErrors(msg);
       onError?.(msg);
       await Swal.fire({
         icon: "error",
-        title: "Erro ao autenticar",
+        title: "Credenciais inválidas",
         text: msg,
         confirmButtonText: "Ok",
       });

@@ -21,8 +21,15 @@ const balance = async (id) => {
     return result[0] || null;
 };
 
+const getAccountByUserId = async (userId) => {
+    const query = "SELECT * FROM account WHERE user_id = ?";
+    const [result] = await connection.execute(query, [userId]);
+    return result[0] || null;
+};
+
 module.exports = {
     createAccount,
     getAccountById,
-    balance
+    balance,
+    getAccountByUserId
 };

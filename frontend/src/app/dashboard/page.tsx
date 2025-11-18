@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/components/Header/Header";
+import Loading from "@/components/Loading/Loading";
 import styles from "./page.module.css";
 import DashboardClient from "@/components/Dashboard/DashboardClient";
 import { useAuth } from "@/app/context/context";
@@ -94,7 +95,7 @@ export default function DashboardPage() {
     return (
       <main>
         <Header />
-        <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando dashboard...</div>
+        <Loading />
       </main>
     );
   }
