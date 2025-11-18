@@ -16,14 +16,22 @@ const addTransaction = async (transaction) => {
     return { id, name, amount, date: finalDate, category_id, user_id, account_id };
 };
 
-const getAllTransactions = async () => {
-    const query = `
+const getAllTransactions = async (userId = null) => {
+    let query = `
         SELECT t.*, c.name as category_name, c.type as category_type, c.icon, c.color
         FROM transaction t
         INNER JOIN category c ON t.category_id = c.id
-        ORDER BY t.date DESC, t.created_at DESC
     `;
-    const [transactions] = await connection.execute(query);
+    
+    const params = [];
+    if (userId) {
+        query += " WHERE t.user_id = ?";
+        params.push(userId);
+    }
+    
+    query += " ORDER BY t.date DESC, t.created_at DESC";
+    
+    const [transactions] = await connection.execute(query, params);
     return transactions;
 };
 

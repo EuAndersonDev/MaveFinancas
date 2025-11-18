@@ -18,7 +18,9 @@ const addTransaction = async (req, res) => {
 
 const getAllTransactions = async (req, res) => {
     try {
-        const transactions = await transactionModel.getAllTransactions();
+        // Busca userId do header ou query param
+        const userId = req.headers['x-user-id'] || req.query.user_id;
+        const transactions = await transactionModel.getAllTransactions(userId);
         return res.status(200).json(transactions);
     } catch (error) {
         console.log(error);

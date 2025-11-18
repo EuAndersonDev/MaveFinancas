@@ -1,33 +1,116 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/context";
 import Header from "@/components/Header/Header";
 import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable, { Transaction } from "@/components/Transactions/TransactionsTable";
 import styles from "./transactions.module.css";
 
-export const metadata = { title: "Transações - Mave Finanças" };
+type BackendTransaction = {
+	id: string;
+	name: string;
+	amount: number;
+	date: string;
+	category_id: string;
+	user_id: string;
+	account_id: string;
+	category_name?: string;
+	category_type?: "income" | "expense";
+};
 
-async function getTransactions(): Promise<Transaction[]> {
-	// Substituir por fetch ao backend quando disponível
-	return [
-		{ id: "1", nome: "Salário", tipo: "Entrada", categoria: "Receita", metodo: "Pix", data: "01/10/2025", valor: 6000 },
-		{ id: "2", nome: "Supermercado", tipo: "Saída", categoria: "Alimentação", metodo: "Cartão de crédito", data: "06/10/2025", valor: -420.5 },
-		{ id: "3", nome: "Conta de luz", tipo: "Saída", categoria: "Moradia", metodo: "Débito", data: "07/10/2025", valor: -210.35 },
-		{ id: "4", nome: "Freelance", tipo: "Entrada", categoria: "Receita", metodo: "Transferência", data: "05/10/2025", valor: 2000 },
-		{ id: "5", nome: "Farmácia", tipo: "Saída", categoria: "Saúde", metodo: "Cartão de débito", data: "10/10/2025", valor: -134.9 },
-		{ id: "6", nome: "Aplicação CDB", tipo: "Investimento", categoria: "Investimento", metodo: "Corretora", data: "11/10/2025", valor: -500 },
-		{ id: "7", nome: "Rendimento CDB", tipo: "Investimento", categoria: "Investimento", metodo: "Corretora", data: "12/10/2025", valor: 45.75 },
-		{ id: "8", nome: "Internet", tipo: "Saída", categoria: "Moradia", metodo: "Débito automático", data: "12/10/2025", valor: -120 },
-		{ id: "9", nome: "Almoço", tipo: "Saída", categoria: "Alimentação", metodo: "Cartão de débito", data: "13/10/2025", valor: -58.9 },
-		{ id: "10", nome: "Pix recebido", tipo: "Entrada", categoria: "Receita", metodo: "Pix", data: "14/10/2025", valor: 300 },
-		{ id: "11", nome: "Gasolina", tipo: "Saída", categoria: "Transporte", metodo: "Crédito", data: "15/10/2025", valor: -210 },
-		{ id: "12", nome: "Cinema", tipo: "Saída", categoria: "Lazer", metodo: "Crédito", data: "16/10/2025", valor: -52 },
-		{ id: "13", nome: "Dividendos Ações", tipo: "Investimento", categoria: "Investimento", metodo: "Corretora", data: "17/10/2025", valor: 120.3 },
-		{ id: "14", nome: "Supermercado", tipo: "Saída", categoria: "Alimentação", metodo: "Crédito", data: "18/10/2025", valor: -210.2 },
-		{ id: "15", nome: "Plano de saúde", tipo: "Saída", categoria: "Saúde", metodo: "Boleto", data: "19/10/2025", valor: -385 },
-	];
+function formatDate(isoDate: string): string {
+	const [year, month, day] = isoDate.split("T")[0].split("-");
+	return `${day}/${month}/${year}`;
 }
 
-export default async function TransactionsPage() {
-	const data = await getTransactions();
+function mapBackendToUI(tx: BackendTransaction): Transaction {
+	const isIncome = tx.amount > 0;
+	const tipo: "Entrada" | "Saída" | "Investimento" = isIncome ? "Entrada" : "Saída";
+	
+	return {
+		id: tx.id,
+		nome: tx.name,
+		tipo,
+		categoria: tx.category_name || "Outros",
+		metodo: "Pix", // Backend não armazena método de pagamento atualmente
+		data: formatDate(tx.date),
+		valor: tx.amount,
+	};
+}
+
+export default function TransactionsPage() {
+	const { user } = useAuth();
+	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!user?.id) {
+			setLoading(false);
+			return;
+		}
+
+		const userId = user.id.toString();
+
+		async function fetchTransactions() {
+			try {
+				const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/transactions`, {
+					headers: {
+						"x-user-id": userId,
+					},
+				});
+				
+				if (!res.ok) throw new Error("Falha ao buscar transações");
+				
+				const data: BackendTransaction[] = await res.json();
+				const mapped = data.map(mapBackendToUI);
+				setTransactions(mapped);
+			} catch (err: any) {
+				setError(err.message || "Erro ao carregar transações");
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		fetchTransactions();
+	}, [user]);
+
+	const handleEdit = async (id: string) => {
+		// TODO: Implementar modal de edição
+		console.log("Editar transação:", id);
+	};
+
+	const handleDelete = async (id: string) => {
+		if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
+
+		try {
+			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/transactions/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!res.ok) throw new Error("Falha ao excluir transação");
+
+			// Remove da lista local
+			setTransactions((prev) => prev.filter((t) => t.id !== id));
+		} catch (err: any) {
+			alert(err.message || "Erro ao excluir transação");
+		}
+	};
+
+	const handleTransactionCreated = () => {
+		// Recarrega a lista após criar nova transação
+		if (!user?.id) return;
+		
+		fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/transactions`, {
+			headers: { "x-user-id": user.id.toString() },
+		})
+			.then((res) => res.json())
+			.then((data: BackendTransaction[]) => {
+				setTransactions(data.map(mapBackendToUI));
+			})
+			.catch(console.error);
+	};
 
 	return (
 		<main>
@@ -35,10 +118,22 @@ export default async function TransactionsPage() {
 			<div className={styles.container}>
 				<div className={styles.toolbar}>
 					<h2 className={styles.title}>Transações</h2>
-					<AddTransactionButton userId="mock-user" accountId="mock-account" />
+					{user && (
+						<AddTransactionButton
+							userId={user.id.toString()}
+							accountId={user.id.toString()}
+							onCreated={handleTransactionCreated}
+						/>
+					)}
 				</div>
 
-				<TransactionsTable data={data} />
+				{loading ? (
+					<p>Carregando transações...</p>
+				) : error ? (
+					<p style={{ color: "red" }}>{error}</p>
+				) : (
+					<TransactionsTable data={transactions} onEdit={handleEdit} onDelete={handleDelete} />
+				)}
 			</div>
 		</main>
 	);

@@ -1,16 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./AddTransactionModal.module.css";
 import Button from "@/components/Button/Button";
 
 export type NewTransactionPayload = {
-  description: string; // título
-  amount: number; // valor numérico positivo
-  type: "deposit" | "withdrawal"; // mapeado de Entrada/Saída
-  date?: string; // ISO date (yyyy-MM-dd)
-  paymentMethod?: string; // exibido apenas UI
+  name: string;
+  amount: number; // valor com sinal: positivo = entrada, negativo = saída
+  date: string; // ISO date (yyyy-MM-dd)
+  category_id: string;
   user_id: string;
   account_id: string;
+};
+
+type Category = {
+  id: string;
+  name: string;
+  type: "income" | "expense";
+  icon?: string;
+  color?: string;
 };
 
 type AddTransactionModalProps = {
@@ -29,20 +36,55 @@ export default function AddTransactionModal({ open, onClose, userId, accountId, 
   const [title, setTitle] = useState("");
   // `value` armazena apenas dígitos (centavos). Ex.: "1234" => R$ 12,34
   const [value, setValue] = useState("");
-  const [txTypeUI, setTxTypeUI] = useState("Entrada"); // Entrada | Saída | Investimento
-  const [paymentMethod, setPaymentMethod] = useState("Pix");
+  const [txTypeUI, setTxTypeUI] = useState<"income" | "expense">("income");
+  const [categoryId, setCategoryId] = useState("");
   const [date, setDate] = useState(todayISO());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // Busca categorias ao abrir modal
+  useEffect(() => {
+    if (!open) return;
+    
+    async function fetchCategories() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/categories`);
+        if (!res.ok) throw new Error("Falha ao buscar categorias");
+        const data: Category[] = await res.json();
+        setCategories(data);
+        
+        // Define primeira categoria do tipo selecionado como padrão
+        const defaultCat = data.find(c => c.type === txTypeUI);
+        if (defaultCat) setCategoryId(defaultCat.id);
+      } catch (err) {
+        console.error("Erro ao buscar categorias:", err);
+      } finally {
+        setLoadingCategories(false);
+      }
+    }
+    
+    fetchCategories();
+  }, [open, txTypeUI]);
+
+  // Atualiza categorias disponíveis quando tipo muda
+  useEffect(() => {
+    const filtered = categories.filter(c => c.type === txTypeUI);
+    if (filtered.length > 0 && !filtered.find(c => c.id === categoryId)) {
+      setCategoryId(filtered[0].id);
+    }
+  }, [txTypeUI, categories, categoryId]);
 
   if (!open) return null;
 
   const reset = () => {
     setTitle("");
     setValue("");
-    setTxTypeUI("Entrada");
-    setPaymentMethod("Pix");
+    setTxTypeUI("income");
+    setCategoryId("");
     setDate(todayISO());
     setError(null);
     setSuccess(false);
@@ -57,14 +99,16 @@ export default function AddTransactionModal({ open, onClose, userId, accountId, 
     const parsed = cents / 100;
     if (!title.trim()) return setError("Informe o título");
     if (isNaN(parsed) || parsed <= 0) return setError("Valor inválido");
+    if (!categoryId) return setError("Selecione uma categoria");
+
+    // Amount com sinal: positivo para entrada, negativo para saída
+    const signedAmount = txTypeUI === "income" ? parsed : -parsed;
 
     const payload: NewTransactionPayload = {
-      description: title.trim(),
-      amount: parsed,
-      // Mapeia Investimento como saída (withdrawal) enquanto backend suporta 2 tipos
-      type: txTypeUI === "Entrada" ? "deposit" : "withdrawal",
+      name: title.trim(),
+      amount: signedAmount,
       date,
-      paymentMethod,
+      category_id: categoryId,
       user_id: userId,
       account_id: accountId,
     };
@@ -89,6 +133,8 @@ export default function AddTransactionModal({ open, onClose, userId, accountId, 
       setLoading(false);
     }
   };
+
+  const filteredCategories = categories.filter(c => c.type === txTypeUI);
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Adicionar transação">
@@ -149,21 +195,31 @@ export default function AddTransactionModal({ open, onClose, userId, accountId, 
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup} style={{ flex: 1 }}>
               <label className={styles.label} htmlFor="txType">Tipo da transação</label>
-              <select id="txType" className={styles.select} value={txTypeUI} onChange={e => setTxTypeUI(e.target.value)}>
-                <option>Entrada</option>
-                <option>Saída</option>
-                <option>Investimento</option>
+              <select id="txType" className={styles.select} value={txTypeUI} onChange={e => setTxTypeUI(e.target.value as "income" | "expense")}>
+                <option value="income">Entrada</option>
+                <option value="expense">Saída</option>
               </select>
             </div>
             <div className={styles.fieldGroup} style={{ flex: 1 }}>
-              <label className={styles.label} htmlFor="txMethod">Método de pagamento</label>
-              <select id="txMethod" className={styles.select} value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
-                <option>Pix</option>
-                <option>Cartão de crédito</option>
-                <option>Cartão de débito</option>
-                <option>Dinheiro</option>
-                <option>Transferência</option>
-                <option>Boleto</option>
+              <label className={styles.label} htmlFor="txCategory">Categoria</label>
+              <select 
+                id="txCategory" 
+                className={styles.select} 
+                value={categoryId} 
+                onChange={e => setCategoryId(e.target.value)}
+                disabled={loadingCategories}
+              >
+                {loadingCategories ? (
+                  <option>Carregando...</option>
+                ) : filteredCategories.length === 0 ? (
+                  <option>Nenhuma categoria</option>
+                ) : (
+                  filteredCategories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.icon} {cat.name}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>
