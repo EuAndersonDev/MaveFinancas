@@ -6,6 +6,7 @@ import Swal from "@/lib/sweetalert";
 import Header from "@/components/Header/Header";
 import AddTransactionButton from "@/components/Transactions/AddTransactionButton";
 import TransactionsTable, { Transaction } from "@/components/Transactions/TransactionsTable";
+import EditTransactionSheet from "@/components/Transactions/EditTransactionSheet";
 import Loading from "@/components/Loading/Loading";
 import styles from "./transactions.module.css";
 
@@ -44,8 +45,11 @@ function mapBackendToUI(tx: BackendTransaction): Transaction {
 export default function TransactionsPage() {
 	const { user } = useAuth();
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [backendTransactions, setBackendTransactions] = useState<BackendTransaction[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [editingTransaction, setEditingTransaction] = useState<BackendTransaction | null>(null);
+	const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
 
 	useEffect(() => {
 		if (!user?.id) {
@@ -66,6 +70,7 @@ export default function TransactionsPage() {
 				if (!res.ok) throw new Error("Falha ao buscar transações");
 				
 				const data: BackendTransaction[] = await res.json();
+				setBackendTransactions(data);
 				const mapped = data.map(mapBackendToUI);
 				setTransactions(mapped);
 			} catch (err: any) {
@@ -79,8 +84,11 @@ export default function TransactionsPage() {
 	}, [user]);
 
 	const handleEdit = async (id: string) => {
-		// TODO: Implementar modal de edição
-		console.log("Editar transação:", id);
+		const transaction = backendTransactions.find(t => t.id === id);
+		if (transaction) {
+			setEditingTransaction(transaction);
+			setIsEditSheetOpen(true);
+		}
 	};
 
 	const handleDelete = async (id: string) => {
@@ -130,9 +138,19 @@ export default function TransactionsPage() {
 		})
 			.then((res) => res.json())
 			.then((data: BackendTransaction[]) => {
+				setBackendTransactions(data);
 				setTransactions(data.map(mapBackendToUI));
 			})
 			.catch(console.error);
+	};
+
+	const handleTransactionSaved = () => {
+		handleTransactionCreated();
+	};
+
+	const handleTransactionDeleted = (id: string) => {
+		setTransactions((prev) => prev.filter((t) => t.id !== id));
+		setBackendTransactions((prev) => prev.filter((t) => t.id !== id));
 	};
 
 	return (
@@ -158,6 +176,17 @@ export default function TransactionsPage() {
 					<TransactionsTable data={transactions} onEdit={handleEdit} onDelete={handleDelete} />
 				)}
 			</div>
+
+			<EditTransactionSheet
+				open={isEditSheetOpen}
+				transaction={editingTransaction}
+				onClose={() => {
+					setIsEditSheetOpen(false);
+					setEditingTransaction(null);
+				}}
+				onSaved={handleTransactionSaved}
+				onDeleted={handleTransactionDeleted}
+			/>
 		</main>
 	);
 }
